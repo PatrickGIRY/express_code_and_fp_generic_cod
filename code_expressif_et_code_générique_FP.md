@@ -2,12 +2,12 @@
 
 Utiliser au mieux la plomberie fournie par le langage de programmation, ou exprimer au mieux le domaine métier ? C'est le dilemme habituel dans un langage de programmation tel que Java.
 
-Voyons cela de plus près au travers de quelques exemple, et comment on parvient à résoudre ce problème avec plus ou moins de bonheur selon le langage de programmation choisi.
+Voyons cela de plus près au travers de quelques exemples, et comment nous parvenons à résoudre ce problème avec plus ou moins de bonheur selon le langage de programmation choisi.
 
 
 ## Type standard et type métier
 
-Prenons l'exemple du prix et quantité en e-commerce. Nous souhaitons créer un type `Price` autour d'un *double* et un type `cashregsiter.Quantity` autour d'un *int* afin d'exprimer au mieux le métier avec des types. Cela amène aussi la protection du typage, pour éviter de passer un `int` à la place d'un autre par erreur. 
+Prenons l'exemple du prix et quantité en e-commerce. Nous souhaitons créer un type `Price` autour d'un *double* et un type `Quantity` autour d'un *int* afin d'exprimer au mieux le métier avec des types. Cela amène aussi la protection du typage, pour éviter de passer un `int` à la place d'un autre par erreur. 
 
 En Java, il faut donc créer une classe pour chaque :
 
@@ -42,15 +42,17 @@ Maintenant nous voulons multiplier le prix par la quantité pour calculer le pri
      }
 
 
-Nous aimerions pouvoir passer directement une instance de Quantity en paramètre, mais cela nous oblige ou bien à sortir la valeur primitive :
+Nous aimerions pouvoir passer directement une instance de `Quantity` en paramètre, mais cela nous oblige ou bien à sortir la valeur primitive :
 
     myPrice.multiply(myQuantity.asDouble());
 
-Ou bien à modifier la méthode multiply() pour accepter le type Quantity, ce qui la rend désormais spécifique à ce type, et donc couplée par la même occasion :
+Ou bien à modifier la méthode `multiply()` pour accepter le type `Quantity`, ce qui la rend désormais spécifique à ce type, et donc couplée par la même occasion :
 
      Price multiply(Quantity quantity) {
         return new Price(this.value * quantity.asDouble());
      }
+     
+Celà dit d'un point vue métier nous pouvons admettre que nous puissions multiplier un prix par une quantité.
 
 En Haskell, la notion de synonyme ou alias permet de donner un nom plus métier au type :
 
@@ -61,7 +63,7 @@ En Haskell, la notion de synonyme ou alias permet de donner un nom plus métier 
 Nous avons un type sur-mesure, mais que nous pouvons aussi utiliser comme un entier quand nous le souhaitons, car il reste aussi un entier :
 
     multiply :: Price -> cashregsiter.Quantity -> Price
-         multiply p q = p * (asDouble q)
+    multiply p q = p * (asDouble q)
                  where asDouble = fromIntegral
                  
 Notez qu'on peut appeler la fonction `multiply` avec n'importe quel entier.
@@ -169,15 +171,15 @@ En F# ou Haskell, il est possible là aussi de définir des **alias de fonctions
 
 ## Predicate standard et predicate métier
 
-Un dernier exemple pour la route, cette fois avec les Predicate Java 8 et une astuce !
+Un dernier exemple pour la route, cette fois avec les `Predicate` Java 8 et une astuce !
 
 Nous avons de nombreuses règles de dégressivité sur les quantités, que nous avons modélisées sous forme de critères :
 
-    public interface QuantityCriteria{
+    public interface QuantityCriteria {
        boolean isSatisfied(Quantity q);
     } 
 
-Le nommage correspond au langage du métier dans notre domaine. Cependant, il est évident que notre critère n'est autre qu'un prédicat, et pour pouvoir utiliser toute la plomberie fournie par le langage de programmation autour des prédicats, il faudrait implémenter l'interface Predicate standard :
+Le nommage correspond au langage du métier dans notre domaine. Cependant, il est évident que notre critère n'est autre qu'un prédicat, et pour pouvoir utiliser toute la plomberie fournie par le langage de programmation autour des prédicats, il faudrait implémenter l'interface `Predicate` standard :
 
     public interface QuantityCriteria extends Predicate<Quantity>{
        boolean isSatisfied(Quantity q);
