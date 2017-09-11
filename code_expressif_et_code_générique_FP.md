@@ -9,7 +9,7 @@ Voyons cela de plus près au travers de quelques exemple, et comment on parvient
 
 Prenons l'exemple du prix et quantité en e-commerce. Nous souhaitons créer un type `Price` autour d'un *double* et un type `cashregsiter.Quantity` autour d'un *int* afin d'exprimer au mieux le métier avec des types. Cela amène aussi la protection du typage, pour éviter de passer un `int` à la place d'un autre par erreur. 
 
-En Java, il faut donc créer une classe pour chaque:
+En Java, il faut donc créer une classe pour chaque :
 
     public final class Price {
          private final double value;
@@ -42,11 +42,11 @@ Maintenant nous voulons multiplier le prix par la quantité pour calculer le pri
      }
 
 
-Nous aimerions pouvoir passer directement une instance de Quantity en paramètre, mais cela nous oblige ou bien à sortir la valeur primitive:
+Nous aimerions pouvoir passer directement une instance de Quantity en paramètre, mais cela nous oblige ou bien à sortir la valeur primitive :
 
     myPrice.multiply(myQuantity.asDouble());
 
-Ou bien à modifier la méthode multiply() pour accepter le type Quantity, ce qui la rend désormais spécifique à ce type, et donc couplée par la même occasion:
+Ou bien à modifier la méthode multiply() pour accepter le type Quantity, ce qui la rend désormais spécifique à ce type, et donc couplée par la même occasion :
 
      Price multiply(Quantity quantity) {
         return new Price(this.value * quantity.asDouble());
@@ -58,7 +58,7 @@ En Haskell, la notion de synonyme ou alias permet de donner un nom plus métier 
      
      type Quantity = Int
      
-Nous avons un type sur-mesure, mais que nous pouvons aussi utiliser comme un entier quand nous le souhaitons, car il reste aussi un entier:
+Nous avons un type sur-mesure, mais que nous pouvons aussi utiliser comme un entier quand nous le souhaitons, car il reste aussi un entier :
 
     multiply :: Price -> cashregsiter.Quantity -> Price
          multiply p q = p * (asDouble q)
@@ -95,13 +95,13 @@ D'autres façons de contourner le problème d'être à la fois un type standard 
 
 ## Monoid standard et monoid métier
 
-Maintenant nous souhaitons additionner des prix. Nous définissons donc une méthode add() à la class Price:
+Maintenant nous souhaitons additionner des prix. Nous définissons donc une méthode add() à la class Price :
 
     Price add(Price other) {
       return other != null ? new Price(value + other.value) : this;
     } 
 
-Et par confort, j'ajoute le prix zero, bien utile dans de nombreux cas:
+Et par confort, j'ajoute le prix zero, bien utile dans de nombreux cas :
 
     public static final Price ZERO = new Price(0.);
 
@@ -120,7 +120,7 @@ Imaginons que nous avons une interface Monoid disponible que nous utilisons déj
         }
     }
 
-Nous souhaitons alors que Price implémente l'interface Monoid:
+Nous souhaitons alors que Price implémente l'interface Monoid :
 
     class Price implements Monoid<Price> {
        ...
@@ -143,9 +143,9 @@ Nous souhaitons alors que Price implémente l'interface Monoid:
         }
     }
 
-Cela nous oblige à définir les méthodes obligatoires **génériques** append() et empty(), qui renvoient vers les membres **expressifs** du métier, la méthode add() et le champs ZERO.
+Cela nous oblige à définir les méthodes obligatoires **génériques** append() et empty(), qui renvoient vers les membres **expressifs** du métier, la méthode add() et le champs ZERO. Cela va encombrer la classe.
 
-En F# ou Haskell, il est possible là aussi de définir des alias de fonctions. Cela permet d'avoir une fonction nommée selon le domaine métier, tout en étant en même temps l'implémentation d'une fonction définie dans une "interface" sous un autre nom:
+En F# ou Haskell, il est possible là aussi de définir des **alias de fonctions**. Cela permet d'avoir une fonction nommée selon le domaine métier, tout en étant en même temps l'implémentation d'une fonction définie dans une "interface" sous un autre nom :
 
     import Data.Monoid
     
@@ -177,13 +177,13 @@ Nous avons de nombreuses règles de dégressivité sur les quantités, que nous 
        boolean isSatisfied(Quantity q);
     } 
 
-Le nommage correspond au langage du métier dans notre domaine. Cependant, il est évident que notre critère n'est autre qu'un prédicat, et pour pouvoir utiliser toute la plomberie fournie par le langage de programmation autour des prédicats, il faudrait implémenter l'interface Predicate standard:
+Le nommage correspond au langage du métier dans notre domaine. Cependant, il est évident que notre critère n'est autre qu'un prédicat, et pour pouvoir utiliser toute la plomberie fournie par le langage de programmation autour des prédicats, il faudrait implémenter l'interface Predicate standard :
 
     public interface QuantityCriteria extends Predicate<Quantity>{
        boolean isSatisfied(Quantity q);
     } 
 
-Ce qui oblige alors à définir en plus la méthode obligatoire test():
+Ce qui oblige alors à définir en plus la méthode obligatoire test(), un petit encombrement :
 
     public interface QuantityCriteria extends Predicate<Quantity> {
        boolean isSatisfied(Quantity q);
@@ -198,12 +198,8 @@ Il faut de plus que la méthode `test()` renvoie à la méthode `isSatisfied()`.
     }
 
 Et voilà ! Nous pouvons donc désormais passer n'importe quelle instance de `QuantityCriteria` à toute fonction qui attend un `Predicate` en paramètre, c'est cool. 
-
-Notez au passage que `QuantityCriteria` n'a qu'une seule méthode abstraite, et est donc une `FunctionalInterface`, il est donc possible de passer une instance de `QuantityCriteria` partout où une lambda de même signature est attendue :
-
-    myStream.filter(myQuantityCritera);
     
-Le `QuantityCriteria` peut également être implémenter par une lambda, notamment dans la classe `Quantity` pour accèder à sa valeur sans casser l'encapsulation :
+Le `QuantityCriteria` peut également être implémenté par une lambda, notamment dans la classe `Quantity` pour accèder à sa valeur sans casser l'encapsulation :
 
     public final class Quantity {
         ...
@@ -212,15 +208,17 @@ Le `QuantityCriteria` peut également être implémenter par une lambda, notamme
         }
     }
 
-Imaginons que nous voulons composer plusieurs `QuantityCriteria` avec un AND logique :
+Imaginons maintenant que nous voulions composer plusieurs `QuantityCriteria` avec un AND logique :
 
     QuantityCriteria over10 = Quantity.criteria(v -> v > 10);
     QuantityCriteria below100 = Quantity.criteria(v -> v < 100);
     Predicate<Quantity> between10And100 = over10.and(below100);
 
-Noté que la méthode `and` intégrée retourne un simple `Predicate`, et non une `QuantityCriteria`. Sniff ! Pourtant nous souhaitons utiliser les critères composés dans une méthode qui attend un `QuantityCriteria` :
+Notez que la méthode `and` intégrée retourne un simple `Predicate`, et non une `QuantityCriteria`. Sniff ! Pourtant nous souhaitons utiliser les critères composés, de type `Predicate<Quantity>`, dans la méthode `isEligible` qui attend un `QuantityCriteria`, idéalement :
 
-Nous pouvons enrichir `QuantityCriteria` d'une méthode `and` d'adaptation :
+    boolean eligible = myPurchaseHistory.isEligible(between10And100);
+
+Et bien c'est impossible ! En contournement, nous pouvons enrichir `QuantityCriteria` d'une méthode `and` d'adaptation :
 
     public interface QuantityCriteria extends Predicate<Quantity> {
         boolean isSatisfied(Quantity q);
@@ -232,14 +230,6 @@ Nous pouvons enrichir `QuantityCriteria` d'une méthode `and` d'adaptation :
         }
     }
     
-    
-    class code_expressif_et_code_générique_FP.md...
-       boolean isEligible(QuantityCriteria criteria);
+Notez cependant que `QuantityCriteria` n'a qu'une seule méthode abstraite, et est donc une `FunctionalInterface`. Il est donc possible de passer une instance de `QuantityCriteria` partout où une lambda de même signature est attendue :
 
-Peut-on alors écrire cela ?
-
-    boolean eligible = PurchaseHistory.isEligible(between10And100);
-
-Par la magie des functional interfaces de Java 8 ?
-
-// Patrick ?
+    myStream.filter(myQuantityCritera);
