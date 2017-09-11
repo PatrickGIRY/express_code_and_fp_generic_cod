@@ -62,15 +62,15 @@ Nous avons un type sur-mesure, mais que nous pouvons aussi utiliser comme un ent
 
     multiply :: Price -> cashregsiter.Quantity -> Price
          multiply p q = p * (asDouble q)
-                 where asDouble = fromIntegra
+                 where asDouble = fromIntegral
                  
-Par contre on peut appeler la fonction `multiply` avec n'importe quel entier.
+Notez qu'on peut appeler la fonction `multiply` avec n'importe quel entier.
 
     multiply 4.5 5 `shouldBe` 22.5 
     
     multiply 4.5 (6 :: Int) `shouldBe` 27.0
     
-Si nous faire des types wrapper comme en Java, nous utilisons des `newtype` :
+Si nous souhaitons faire des types wrapper comme en Java, nous utilisons des `newtype` :
 
     newtype Price = Price Double
         deriving (Eq, Show)
@@ -84,14 +84,13 @@ La fonction `multiply` s'appuie alors sur des "déconstructeurs" pour extraire l
     multiply (Price p) (Quantity q) = Price (p * (asDouble q))
             where asDouble = fromIntegral
             
-Une fois le calcul réalisé nous contruisons le prix avec le résultat.
-Pour appeler la fonction il faut créer un prix et une quantité :
+Une fois le calcul réalisé nous contruisons le prix avec le résultat. Pour appeler la fonction il faut créer un prix et une quantité :
 
     (Price 4.5) `multiply` (Quantity 5) `shouldBe` Price 22.5 
     
-Là nous sommes "type-safe". De plus comme la fonction `multiply` a deux arguments, nous pouvons l'infixer. C'est plus naturel de dire "le prix multiplier par la quantité".
+Là nous sommes donc vraiment "type-safe". De plus comme la fonction `multiply` a deux arguments, nous pouvons l'infixer. C'est plus naturel de dire "le prix multiplié par la quantité".
          
-D'autres façons de contourner le problème d'être à la fois un type standard et un type sur-mesure métier sont la conversion implicite (implicit cast en C++, C# ou Scala, et *deconstructor* en Haskell). Java supports a similar mechanism, called "unboxing", but only for the built-in primitive types.   
+D'autres façons de contourner le problème d'être à la fois un type standard et un type sur-mesure métier sont la conversion implicite (implicit cast en C++, C# ou Scala). Java supporte une construction similaire, le "unboxing", mais seulement pour les types primitifs.   
 
 
 ## Monoid standard et monoid métier
