@@ -10,7 +10,7 @@ public interface QuantityCriteria extends Predicate<Quantity> {
         return isSatisfied(q);
     }
 
-    default QuantityCriteria and(QuantityCriteria other) {
-        return quantity -> Predicate.super.and(other).test(quantity);
+    static QuantityCriteria from(Predicate<Quantity> predicate) {
+        return predicate::test;
     }
 }
