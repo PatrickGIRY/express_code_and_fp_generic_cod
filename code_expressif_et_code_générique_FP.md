@@ -216,7 +216,7 @@ Imaginons maintenant que nous voulions composer plusieurs `QuantityCriteria` ave
     QuantityCriteria below100 = Quantity.criteria(v -> v < 100);
     Predicate<Quantity> between10And100 = over10.and(below100);
 
-Notez que la méthode `and` intégrée retourne un simple `Predicate`, et non une `QuantityCriteria`. Sniff ! Pourtant nous souhaitons utiliser les critères composés, de type `Predicate<Quantity>`, dans la méthode `isEligible` qui attend un `QuantityCriteria`, idéalement :
+Notez que la méthode `and` intégrée retourne un simple `Predicate`, et non une `QuantityCriteria`. Sniff ! Pourtant nous souhaiterions utiliser les critères composés, de type `Predicate<Quantity>`, dans la méthode `isEligible` qui attend un `QuantityCriteria`, idéalement :
 
     boolean eligible = myPurchaseHistory.isEligible(between10And100);
 
@@ -232,6 +232,34 @@ Et bien c'est impossible ! En contournement, nous pouvons enrichir `QuantityCrit
         }
     }
     
-Notez cependant que `QuantityCriteria` n'a qu'une seule méthode abstraite, et est donc une `FunctionalInterface`. Il est donc possible de passer une instance de `QuantityCriteria` partout où une lambda de même signature est attendue :
+Le problème avec cette approche est qu'il faudra ensuite redéfinir toutes les autres méthodes autour des `Predicate`, par exemple : `or`, `all`, `any`, `not`.
+
+Mais tout n'est pas perdu. Par exemple nous pouvons utiliser une méthode référence (équivalent à une lambda) :
+
+    myHistoryPurshase.isEligible(between10And100::test);
+
+Ou encore enrichir `QuantityCriteria` avec un adapter :
+
+    public interface QuantityCriteria extends Predicate<Quantity> {
+        boolean isSatisfied(Quantity q);
+
+        default boolean test(Quantity q) {
+            return isSatisfied(q);
+        }
+
+        static QuantityCriteria from(Predicate<Quantity> predicate) {
+            return predicate::test;
+        }
+    }
+
+Ce qui permet ensuite de convertir à la volée un Predicate générique dans son équivalent typé sur-mesure métier :
+
+    myHistoryPurshase.isEligible(QuantityCriteria.from(between10And100));
+
+Notez en bonus que `QuantityCriteria` n'a qu'une seule méthode abstraite, et est donc une `FunctionalInterface`. Il est donc possible de passer une instance de `QuantityCriteria` partout où une lambda de même signature est attendue :
 
     myStream.filter(myQuantityCritera);
+    
+Dans les cercles d'amateurs de programmation fonctionnelle, il existe bien souvent un biais très fort pour le générique, au détriment parfois de l'expressivité du langage et des concepts métiers. Ce n'est pas une fatalité. 
+
+Et si ça devenait un jeu, d'exprimer le métier le plus litérallement possible, dans ses termes propres, tout en gardant tous les avantages propres aux langages et leurs écosystèmes disponibles ?
