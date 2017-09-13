@@ -1,10 +1,10 @@
 package cashregsiter;
 
-public class HistoryPurshase {
+public class HistoryPurchase {
 
     private final Quantity quantity;
 
-    public HistoryPurshase(Quantity quantity) {
+    public HistoryPurchase(Quantity quantity) {
         this.quantity = quantity;
     }
 

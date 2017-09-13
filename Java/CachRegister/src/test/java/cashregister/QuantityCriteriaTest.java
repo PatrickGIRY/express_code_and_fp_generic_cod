@@ -1,7 +1,7 @@
 package cashregister;
 
 
-import cashregsiter.HistoryPurshase;
+import cashregsiter.HistoryPurchase;
 import cashregsiter.Quantity;
 import cashregsiter.QuantityCriteria;
 import org.junit.Test;
@@ -43,9 +43,9 @@ public class QuantityCriteriaTest {
         QuantityCriteria below100 = Quantity.criteria(v -> v < 100);
 
         Predicate<Quantity> between10And100 = over10.and(below100);
-        HistoryPurshase myHistoryPurshase = new HistoryPurshase(new Quantity(15));
+        HistoryPurchase myHistoryPurchase = new HistoryPurchase(new Quantity(15));
 
-        boolean isEligible = myHistoryPurshase.isEligible(between10And100::test);
+        boolean isEligible = myHistoryPurchase.isEligible(between10And100::test);
 
         assertThat(isEligible).isTrue();
     }
@@ -56,9 +56,9 @@ public class QuantityCriteriaTest {
         QuantityCriteria below100 = Quantity.criteria(v -> v < 100);
 
         Predicate<Quantity> between10And100 = over10.and(below100);
-        HistoryPurshase myHistoryPurshase = new HistoryPurshase(new Quantity(15));
+        HistoryPurchase myHistoryPurchase = new HistoryPurchase(new Quantity(15));
 
-        boolean isEligible = myHistoryPurshase.isEligible(QuantityCriteria.from(between10And100));
+        boolean isEligible = myHistoryPurchase.isEligible(QuantityCriteria.from(between10And100));
 
         assertThat(isEligible).isTrue();
     }

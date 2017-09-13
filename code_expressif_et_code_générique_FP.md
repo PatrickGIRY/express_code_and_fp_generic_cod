@@ -236,7 +236,7 @@ Le problème avec cette approche est qu'il faudra ensuite redéfinir toutes les 
 
 Mais tout n'est pas perdu. Par exemple nous pouvons utiliser une méthode référence (équivalent à une lambda) :
 
-    myHistoryPurshase.isEligible(between10And100::test);
+    myHistoryPurchase.isEligible(between10And100::test);
 
 Ou encore enrichir `QuantityCriteria` avec un adapter :
 
@@ -254,7 +254,7 @@ Ou encore enrichir `QuantityCriteria` avec un adapter :
 
 Ce qui permet ensuite de convertir à la volée un Predicate générique dans son équivalent typé sur-mesure métier :
 
-    myHistoryPurshase.isEligible(QuantityCriteria.from(between10And100));
+    myHistoryPurchase.isEligible(QuantityCriteria.from(between10And100));
 
 Notez en bonus que `QuantityCriteria` n'a qu'une seule méthode abstraite, et est donc une `FunctionalInterface`. Il est donc possible de passer une instance de `QuantityCriteria` partout où une lambda de même signature est attendue :
 
